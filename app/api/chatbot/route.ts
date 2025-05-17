@@ -1,13 +1,8 @@
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold, StartChatParams, Content, FunctionDeclarationsTool, FunctionDeclaration, Part, Tool, GenerativeModel, ChatSession, EnhancedGenerateContentResponse, FunctionCall, Schema, SchemaType } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
 
-// Directly hardcoded API key - replace with your actual valid key
-// Using AIzaSyDujzLUo3UEDJed-PZUtHphS0P9kn94qB8 as example (not real)
-const GEMINI_API_KEY = "AIzaSyDujzLUo3UEDJed-PZUtHphS0P9kn94qB8";
-console.log("STARTUP DEBUG: Using direct GEMINI_API_KEY: " + GEMINI_API_KEY?.substring(0, 5) + "...");
-
 // Initialize the Google Generative AI with your API key
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI("AIzaSyDujzLUo3UEDJed-PZUtHphS0P9kn94qB8");
 
 // Safety settings for the model
 const safetySettings = [
@@ -185,17 +180,7 @@ interface FindCompanionArgs {
 const MODEL_NAME = "models/gemini-1.5-flash";
 
 export async function POST(req: NextRequest) {
-  console.log("DEBUG: POST request to chatbot API received");
-  console.log("DEBUG: Using GEMINI_API_KEY: " + GEMINI_API_KEY?.substring(0, 5) + "...");
-  
-  // For demonstration purposes, return a direct message if using the example key
-  if (GEMINI_API_KEY === 'AIzaSyDujzLUo3UEDJed-PZUtHphS0P9kn94qB8') {
-    console.log("DEBUG: Using example API key - returning placeholder response");
-    return NextResponse.json({
-      response: "This is a placeholder response since you're using the example API key. Replace it with your actual Gemini API key in app/api/chatbot/route.ts."
-    });
-  }
-  
+  console.log("GEMINI_API_KEY loaded by server:", process.env.GEMINI_API_KEY ? "Exists" : "MISSING OR UNDEFINED");
   try {
     const { messages: clientMessages } = await req.json();
 
