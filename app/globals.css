@@ -1,0 +1,768 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 350 100% 68%; /* Rose */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 25 100% 66%; /* Sunset */
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 246 100% 69%; /* Dusk/Purple */
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --destructive: 350 100% 68%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 350 100% 68%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 246 30% 15%;
+    --foreground: 0 0% 98%;
+
+    --card: 246 30% 18%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 246 30% 15%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 350 100% 68%; /* Rose */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 25 100% 66%; /* Sunset */
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 246 100% 69%; /* Dusk/Purple */
+    --accent-foreground: 0 0% 100%;
+
+    --muted: 246 30% 20%;
+    --muted-foreground: 246 10% 70%;
+
+    --destructive: 350 100% 68%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 246 30% 20%;
+    --input: 246 30% 20%;
+    --ring: 350 100% 68%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+  }
+
+  /* Font styles */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-serif;
+  }
+
+  p,
+  span,
+  div,
+  li,
+  a {
+    @apply font-sans;
+  }
+
+  .font-serif {
+    font-family: "Playfair Display", Georgia, serif;
+  }
+
+  .font-sans {
+    font-family: "Poppins", system-ui, -apple-system, sans-serif;
+  }
+
+  .font-mono {
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  /* Modern transitions for all interactive elements */
+  a,
+  button,
+  input,
+  select,
+  textarea {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  /* Fix button text visibility issues */
+  button,
+  .button,
+  [type="button"],
+  [type="submit"] {
+    @apply text-foreground dark:text-foreground;
+  }
+
+  /* Fix for specific buttons that need white text */
+  .btn-primary,
+  .bg-primary,
+  .bg-saheli-primary,
+  .bg-saheli-rose,
+  .bg-saheli-secondary,
+  .bg-saheli-accent,
+  .bg-saheli-orange,
+  .bg-gradient-to-r,
+  [data-state="active"].bg-saheli-secondary,
+  [data-state="active"].bg-saheli-primary,
+  [data-state="active"].bg-saheli-green,
+  .bg-destructive,
+  .bg-green-500,
+  .bg-yellow-500,
+  .bg-red-500,
+  .bg-blue-500,
+  .bg-purple-500 {
+    @apply text-white dark:text-white;
+  }
+
+  /* Fix for outline buttons */
+  .btn-outline,
+  button[variant="outline"],
+  .bg-white,
+  .bg-background {
+    @apply text-foreground dark:text-foreground;
+  }
+
+  /* Dark mode overrides */
+  .dark .bg-white {
+    @apply bg-gray-800;
+  }
+
+  .dark .border {
+    @apply border-gray-700;
+  }
+
+  .dark .text-gray-800 {
+    @apply text-gray-200;
+  }
+
+  .dark .text-gray-700 {
+    @apply text-gray-300;
+  }
+
+  .dark .text-gray-600 {
+    @apply text-gray-400;
+  }
+
+  .dark .bg-gray-100 {
+    @apply bg-gray-800;
+  }
+
+  .dark .bg-gray-200 {
+    @apply bg-gray-700;
+  }
+}
+
+/* Custom styles for the map markers */
+.marker-pulse {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 94, 120, 0.6);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 15px rgba(255, 94, 120, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 94, 120, 0);
+  }
+}
+
+/* Dark mode styles for map elements */
+.dark .mapboxgl-canvas,
+.dark .maplibregl-canvas {
+  filter: brightness(0.7) contrast(1.2) hue-rotate(180deg) saturate(0.8);
+}
+
+.dark .mapboxgl-ctrl-attrib,
+.dark .maplibregl-ctrl-attrib {
+  background-color: rgba(44, 44, 84, 0.8) !important;
+  color: #f8f1f1 !important;
+}
+
+.dark .mapboxgl-ctrl-group,
+.dark .maplibregl-ctrl-group {
+  background-color: #2c2c54 !important;
+}
+
+.dark .mapboxgl-ctrl button,
+.dark .maplibregl-ctrl button {
+  background-color: #474787 !important;
+  color: #f8f1f1 !important;
+}
+
+/* Custom scrollbar for better UX */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 94, 120, 0.3);
+  border-radius: 20px;
+}
+
+.dark .overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 123, 84, 0.3);
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 94, 120, 0.5);
+}
+
+.dark .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 123, 84, 0.5);
+}
+
+/* Dialog animations */
+@keyframes dialogFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dialog-content {
+  animation: dialogFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Loading animations */
+.loading-spinner {
+  @apply relative w-10 h-10;
+}
+
+.loading-spinner:before,
+.loading-spinner:after {
+  content: "";
+  @apply absolute top-0 left-0 w-full h-full rounded-full;
+}
+
+.loading-spinner:before {
+  background-image: linear-gradient(to right, #ff5e78, #ff7b54);
+  @apply opacity-30;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.loading-spinner:after {
+  @apply border-2 border-transparent;
+  border-top-color: #ff5e78;
+  border-right-color: #ff7b54;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Shimmer effect for loading states */
+.shimmer-effect {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+.dark .shimmer-effect {
+  background: linear-gradient(90deg, rgba(44, 44, 84, 0) 0%, rgba(71, 71, 135, 0.2) 50%, rgba(44, 44, 84, 0) 100%);
+  background-size: 200% 100%;
+}
+
+/* Modern card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(to right, #ff5e78, #ff7b54);
+}
+
+.gradient-text-purple {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(to right, #6c63ff, #9d97ff);
+}
+
+/* Animated buttons */
+.btn-animated {
+  @apply relative overflow-hidden transition-all duration-300;
+}
+
+.btn-animated::after {
+  content: "";
+  @apply absolute top-0 left-0 w-full h-full bg-white opacity-0 transition-opacity duration-300;
+}
+
+.btn-animated:hover::after {
+  @apply opacity-20;
+}
+
+/* Animated icons */
+.icon-animated {
+  @apply transition-transform duration-300 ease-in-out;
+}
+
+.icon-animated:hover {
+  @apply transform scale-110;
+}
+
+/* Glow effect */
+.glow-effect {
+  @apply relative;
+}
+
+.glow-effect::before {
+  content: "";
+  @apply absolute inset-0 rounded-lg -z-10 opacity-0 transition-opacity duration-300;
+  background-image: linear-gradient(to right, #ff5e78, #ff7b54);
+  filter: blur(1rem);
+}
+
+.glow-effect:hover::before {
+  @apply opacity-30;
+}
+
+.glow-effect-purple::before {
+  background-image: linear-gradient(to right, #6c63ff, #9d97ff);
+}
+
+/* Modern glass effect */
+.glass-effect {
+  @apply bg-white/10 backdrop-blur-md border border-white/20 dark:bg-black/20 dark:border-white/10;
+}
+
+/* Page transitions */
+.page-transition-enter {
+  @apply opacity-0;
+}
+
+.page-transition-enter-active {
+  @apply opacity-100 transition-opacity duration-300;
+}
+
+.page-transition-exit {
+  @apply opacity-100;
+}
+
+.page-transition-exit-active {
+  @apply opacity-0 transition-opacity duration-300;
+}
+
+/* Floating elements */
+.floating {
+  animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Gradient borders */
+.gradient-border {
+  position: relative;
+  border-radius: 0.75rem;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff5e78, #ff7b54);
+  z-index: -1;
+  border-radius: 0.85rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gradient-border:hover::before {
+  opacity: 1;
+}
+
+.gradient-border-purple::before {
+  background: linear-gradient(45deg, #6c63ff, #9d97ff);
+}
+
+/* Button hover effects */
+.btn-hover-slide {
+  @apply relative overflow-hidden;
+}
+
+.btn-hover-slide::after {
+  content: "";
+  @apply absolute top-0 left-0 w-0 h-full transition-all duration-300;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn-hover-slide:hover::after {
+  @apply w-full;
+}
+
+/* Notification badge pulse */
+.notification-badge {
+  @apply relative;
+}
+
+.notification-badge::after {
+  content: "";
+  @apply absolute top-0 right-0 w-2 h-2 rounded-full;
+  background-color: #ff7b54;
+  animation: pulse-subtle 1.5s infinite;
+}
+
+/* Skeleton loading */
+.skeleton {
+  @apply bg-gray-200 dark:bg-gray-700 animate-pulse rounded;
+}
+
+/* Chat message styles - rewritten without @apply to avoid parsing issues */
+.chat-message {
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+.chat-message.sent {
+  background-color: #6c63ff;
+  color: white;
+  margin-left: auto;
+  border-top-right-radius: 0;
+}
+
+.chat-message.received {
+  background-color: #f1f5f9;
+  color: #1e293b;
+  margin-right: auto;
+  border-top-left-radius: 0;
+}
+
+.dark .chat-message.received {
+  background-color: #474787;
+  color: #f8f1f1;
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-top-width: 1px;
+}
+
+.dark .chat-input {
+  border-color: #474787;
+}
+
+/* Map styles */
+.map-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.map-search-box {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  width: 16rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 0.5rem;
+}
+
+.dark .map-search-box {
+  background-color: #2c2c54;
+  color: #f8f1f1;
+}
+
+.map-control {
+  position: absolute;
+  z-index: 10;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 0.5rem;
+}
+
+.dark .map-control {
+  background-color: #2c2c54;
+  color: #f8f1f1;
+}
+
+.map-control.top-right {
+  top: 1rem;
+  right: 1rem;
+}
+
+.map-control.bottom-right {
+  bottom: 1rem;
+  right: 1rem;
+}
+
+.map-control.bottom-left {
+  bottom: 1rem;
+  left: 1rem;
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse-subtle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes bounce-light {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-up {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-down {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes rotate-slow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Button styles to ensure text visibility */
+.btn,
+.button,
+[type="button"],
+[type="submit"] {
+  color: white;
+}
+
+.btn-outline,
+.button-outline {
+  color: currentColor;
+}
+
+.btn-ghost,
+.button-ghost {
+  color: currentColor;
+}
+
+/* Add dark mode styles for cards and other elements */
+.dark .card-hover:hover {
+  background-color: #2c2c54;
+  border-color: rgba(108, 99, 255, 0.3);
+}
+
+/* Loading spinner */
+.loading-spinner-alt {
+  width: 2rem;
+  height: 2rem;
+  border: 4px solid rgba(108, 99, 255, 0.3);
+  border-top-color: #6c63ff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Consistent button styling */
+.btn-primary {
+  background-color: #6c63ff;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #5a52e0;
+}
+
+.btn-secondary {
+  background-color: #ff5e78;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: #e54d67;
+}
+
+.btn-outline {
+  border: 1px solid rgba(108, 99, 255, 0.3);
+  color: #6c63ff;
+  transition: all 0.3s ease;
+}
+
+.btn-outline:hover {
+  border-color: #6c63ff;
+  background-color: rgba(108, 99, 255, 0.1);
+}
+
+/* SOS Button Styles */
+.sos-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.sos-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 94, 120, 0.8) 0%, rgba(255, 94, 120, 0) 70%);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.5s ease;
+}
+
+.sos-button:hover::before,
+.sos-button:active::before {
+  opacity: 0.6;
+  transform: scale(1.5);
+}
+
+.sos-pulse {
+  animation: sos-pulse 1.5s infinite;
+}
+
+@keyframes sos-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 94, 120, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(255, 94, 120, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 94, 120, 0);
+  }
+}
+

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOS Emergency Alert</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1d1b32;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+        h2 {
+            color: #e44873;
+        }
+        video {
+            border: 2px solid #e44873;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        button {
+            background-color: #e44873;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #c43760;
+        }
+    </style>
+</head>
+<body>
+    <h2>Discrete Evidence Recorder</h2>
+    <p>Say "Help" to trigger SOS alert (SMS & Call) and start recording.</p>
+    <video id="recordedVideo" width="400" controls></video>
+    <button id="downloadBtn" style="display:none;">Download Video</button>
+
+    <script>
+        let mediaRecorder;
+        let recordedChunks = [];
+        let isRecording = false;
+        let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.continuous = true;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+
+        recognition.onresult = async (event) => {
+            let transcript = event.results[event.results.length - 1][0].transcript.toLowerCase();
+            console.log("Detected Speech:", transcript);
+            if (transcript.includes("help") && !isRecording) {
+                startRecording();
+                sendSOS();
+            }
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+        };
+
+        recognition.start();
+
+        async function startRecording() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                recordedChunks = [];
+                isRecording = true;
+
+                mediaRecorder.ondataavailable = event => recordedChunks.push(event.data);
+
+                mediaRecorder.onstop = () => {
+                    isRecording = false;
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    document.getElementById('recordedVideo').src = url;
+                    document.getElementById('downloadBtn').style.display = 'inline-block';
+                    document.getElementById('downloadBtn').onclick = () => downloadVideo(blob);
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                setTimeout(stopRecording, 10000); // Stop after 10s
+            } catch (error) {
+                console.error("Error accessing media devices:", error);
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+            }
+        }
+
+        function downloadVideo(blob) {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'evidence_recording.webm';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function sendSOS() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                const latitude = position.coords.latitude;
+                const longitude = position.coords.longitude;
+
+                fetch('/send-sos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        latitude: latitude,
+                        longitude: longitude
+                    })
+                })
+                .then(response => response.json())
+                .then(data => console.log("SOS Response:", data))
+                .catch(error => console.error("Error sending SOS:", error));
+            },
+            function (error) {
+                console.error("Geolocation error:", error);
+                alert("Could not get your location. Please allow location access.");
+            }
+        );
+    } else {
+        alert("Geolocation is not supported by your browser.");
+    }
+}
+
+    </script>
+</body>
+</html>
