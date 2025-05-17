@@ -13,7 +13,6 @@ import { EmergencyContacts } from "@/components/dashboard/emergency-contacts"
 import { RecentAlerts } from "@/components/dashboard/recent-alerts"
 import { ProtectedRoute } from "@/components/auth/protected-route"
 import { auth } from "@/lib/auth"
-import { SOSButton } from "@/components/safety/sos-button"
 
 export default function DashboardPage() {
   // Get current user
@@ -163,9 +162,6 @@ export default function DashboardPage() {
             </Card>
           </div>
         </main>
-        
-        {/* SOS Button */}
-        <SOSButton />
       </div>
     </ProtectedRoute>
   )

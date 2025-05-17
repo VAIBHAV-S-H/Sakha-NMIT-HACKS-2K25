@@ -178,7 +178,7 @@ export function SafetyChatbot() {
     <>
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 h-16 w-16 rounded-full bg-saheli-primary hover:bg-saheli-primary-dark shadow-lg z-50 flex items-center justify-center"
+        className="fixed bottom-28 right-6 h-16 w-16 rounded-full bg-saheli-primary hover:bg-saheli-primary-dark shadow-lg z-50 flex items-center justify-center"
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         {isOpen ? (
@@ -190,7 +190,7 @@ export function SafetyChatbot() {
 
       <div
         className={cn(
-          "fixed bottom-24 right-6 w-full max-w-md h-[70vh] max-h-[600px] bg-white border border-saheli-light-gray rounded-lg shadow-xl flex flex-col transition-all duration-300 ease-in-out z-40",
+          "fixed bottom-48 right-6 w-full max-w-md h-[70vh] max-h-[600px] bg-white border border-saheli-light-gray rounded-lg shadow-xl flex flex-col transition-all duration-300 ease-in-out z-40",
           isOpen
             ? "opacity-100 translate-y-0 pointer-events-auto"
             : "opacity-0 translate-y-10 pointer-events-none"

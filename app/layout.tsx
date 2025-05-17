@@ -6,6 +6,7 @@ import { ClientThemeProvider } from "@/components/client-theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as SonnerToaster } from 'sonner'
 import ClientChatbot from "@/components/chatbot/client-chatbot"
+import ClientSOSButton from "@/components/safety/client-sos-button"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -29,6 +30,7 @@ export default function RootLayout({
         <ClientThemeProvider>
           {children}
           <ClientChatbot />
+          <ClientSOSButton />
           <Toaster />
           <SonnerToaster />
         </ClientThemeProvider>
@@ -36,7 +38,5 @@ export default function RootLayout({
     </html>
   )
 }
-
-
 
 import './globals.css'
