@@ -11,69 +11,78 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loader2 } from "lucide-react"
+import { OtpAuthForm } from "@/components/auth/otp-auth-form"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function LoginPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState("login")
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
   const [name, setName] = useState("")
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const [showOtpForm, setShowOtpForm] = useState(false)
+  const [otpIdentifier, setOtpIdentifier] = useState("")
+
+  const { toast } = useToast()
+
+  const handleProceedToOtp = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-
-    try {
-      // Simulate successful login for demo purposes
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      // Store auth token in localStorage
-      localStorage.setItem("saheli_auth_token", "demo_token_12345")
-      localStorage.setItem(
-        "saheli_user",
-        JSON.stringify({
-          name: "Demo User",
-          email: email,
-          id: "user_demo_123",
-        }),
-      )
-
-      // Redirect to dashboard
-      router.push("/dashboard")
-    } catch (err) {
-      console.error("Login error:", err)
-    } finally {
-      setIsLoading(false)
+    if (activeTab === "login" && !email.trim()) {
+      toast({ variant: "destructive", title: "Validation Error", description: "Please enter your email to login." })
+      return
     }
+    if (activeTab === "signup" && (!name.trim() || !email.trim())) {
+      toast({ variant: "destructive", title: "Validation Error", description: "Please enter your name and email to sign up." })
+      return
+    }
+
+    setIsLoading(true)
+    await new Promise((resolve) => setTimeout(resolve, 200))
+    
+    setOtpIdentifier(email)
+    setShowOtpForm(true)
+      setIsLoading(false)
   }
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleOtpAuthSuccess = (identifier: string) => {
     setIsLoading(true)
+    console.log("Authenticated via OTP with:", identifier)
 
-    try {
-      // Simulate successful registration for demo purposes
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // Store auth token in localStorage
-      localStorage.setItem("saheli_auth_token", "demo_token_12345")
+    localStorage.setItem("saheli_auth_token", "demo_otp_token_12345")
       localStorage.setItem(
         "saheli_user",
         JSON.stringify({
-          name: name,
-          email: email,
-          id: "user_demo_123",
+        name: activeTab === "signup" ? name : `User (${identifier.split("@")[0] || identifier.slice(0, 5)})`,
+        email: identifier,
+        id: `user_otp_${Date.now()}`,
         }),
       )
-
-      // Redirect to dashboard
+    toast({ title: "Login Successful!", description: "Redirecting to your dashboard..." })
       router.push("/dashboard")
-    } catch (err) {
-      console.error("Registration error:", err)
-    } finally {
-      setIsLoading(false)
-    }
+  }
+
+  if (showOtpForm) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-saheli-rose/10 via-background to-saheli-purple/10 p-4">
+        <OtpAuthForm
+          onAuthSuccess={handleOtpAuthSuccess}
+          identifierLabel="Email"
+          identifierPlaceholder="Enter your email"
+        />
+        <Button
+          variant="link"
+          onClick={() => {
+            setShowOtpForm(false)
+            setOtpIdentifier("")
+            setName("")
+          }}
+          className="mt-4 text-saheli-rose hover:text-saheli-purple"
+        >
+          &larr; Back to Login/Signup
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -84,7 +93,7 @@ export default function LoginPage() {
           <p className="text-muted-foreground mt-2">Your safety companion</p>
         </div>
 
-        <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs defaultValue="login" value={activeTab} onValueChange={(value) => { setEmail(""); setName(""); setActiveTab(value); }} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="login">Login</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
@@ -93,36 +102,21 @@ export default function LoginPage() {
           <TabsContent value="login">
             <Card className="border-2 border-saheli-rose/20 shadow-lg">
               <CardHeader>
-                <CardTitle className="text-2xl">Welcome back</CardTitle>
-                <CardDescription>Enter your credentials to access your account</CardDescription>
+                <CardTitle className="text-2xl">Login with Email</CardTitle>
+                <CardDescription>Enter your email to receive an OTP.</CardDescription>
               </CardHeader>
-              <form onSubmit={handleLogin}>
+              <form onSubmit={handleProceedToOtp}>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email-login">Email</Label>
                     <Input
-                      id="email"
+                      id="email-login"
                       type="email"
                       placeholder="name@example.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password">Password</Label>
-                      <Link href="/forgot-password" className="text-xs text-saheli-rose hover:underline">
-                        Forgot password?
-                      </Link>
-                    </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
+                      disabled={isLoading}
                     />
                   </div>
                 </CardContent>
@@ -135,10 +129,10 @@ export default function LoginPage() {
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Signing in...
+                        Processing...
                       </>
                     ) : (
-                      "Sign In"
+                      "Continue with Email"
                     )}
                   </Button>
                 </CardFooter>
@@ -150,18 +144,19 @@ export default function LoginPage() {
             <Card className="border-2 border-saheli-purple/20 shadow-lg">
               <CardHeader>
                 <CardTitle className="text-2xl">Create an account</CardTitle>
-                <CardDescription>Enter your details to create your account</CardDescription>
+                <CardDescription>Enter your details and verify with an OTP.</CardDescription>
               </CardHeader>
-              <form onSubmit={handleSignup}>
+              <form onSubmit={handleProceedToOtp}>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="name-signup">Full Name</Label>
                     <Input
-                      id="name"
+                      id="name-signup"
                       placeholder="Jane Doe"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
+                      disabled={isLoading}
                     />
                   </div>
                   <div className="space-y-2">
@@ -173,17 +168,7 @@ export default function LoginPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password-signup">Password</Label>
-                    <Input
-                      id="password-signup"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
+                      disabled={isLoading}
                     />
                   </div>
                 </CardContent>
@@ -196,10 +181,10 @@ export default function LoginPage() {
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating account...
+                        Processing...
                       </>
                     ) : (
-                      "Sign Up"
+                      "Sign Up with Email"
                     )}
                   </Button>
                 </CardFooter>

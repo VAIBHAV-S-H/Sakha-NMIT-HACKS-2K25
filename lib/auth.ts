@@ -54,11 +54,74 @@ const getCurrentUser = () => {
   return userJson ? JSON.parse(userJson) : null
 }
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export const auth = {
   login,
   register,
   logout,
   isAuthenticated,
   getCurrentUser,
+  getUser(): User | null {
+    if (typeof window === 'undefined') return null;
+    
+    const userJson = localStorage.getItem('saheli_user');
+    if (!userJson) return null;
+    
+    try {
+      return JSON.parse(userJson) as User;
+    } catch (e) {
+      console.error('Failed to parse user data:', e);
+      return null;
+    }
+  },
+  async requestOtp(identifier: string): Promise<boolean> {
+    try {
+      const response = await fetch('/api/auth/request-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to request OTP');
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Error requesting OTP:', error);
+      return false;
+    }
+  },
+  async verifyOtp(identifier: string, otp: string): Promise<User | null> {
+    try {
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier, otp })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Invalid OTP');
+      }
+      
+      const data = await response.json();
+      
+      if (data.user) {
+        localStorage.setItem('saheli_auth_token', `otp_token_${Date.now()}`);
+        localStorage.setItem('saheli_user', JSON.stringify(data.user));
+        return data.user;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      return null;
+    }
+  }
 }
 

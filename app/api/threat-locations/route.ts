@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     }
 
     const result = await db.collection(COLLECTIONS.THREAT_LOCATIONS).insertOne(newLocation)
-    
+
     return NextResponse.json({
       ...newLocation,
       _id: result.insertedId

@@ -1,18 +1,19 @@
 import { NextResponse } from 'next/server';
 import twilio from 'twilio';
+import type { Twilio } from 'twilio';
 
-// Twilio Credentials
-const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID || "ACd7d92cde826c1e7e9519a6c0811d4e53";
-const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN || "c457d017fd5921d89593385ddd452ec9";
-const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER || "+17155788944";
-const EMERGENCY_CONTACT = process.env.EMERGENCY_CONTACT || "+918431297102";
+// Direct Twilio credentials (replace with your actual credentials)
+const TWILIO_ACCOUNT_SID = "ACd7d92cde826c1e7e9519a6c0811d4e53";
+const TWILIO_AUTH_TOKEN = "c457d017fd5921d89593385ddd452ec9";
+const TWILIO_PHONE_NUMBER = "+17155788944";
+const EMERGENCY_CONTACT = "+918431297102";
 
 // Validate Twilio credentials
-if (!TWILIO_ACCOUNT_SID || TWILIO_ACCOUNT_SID === "your_account_sid") {
+if (!TWILIO_ACCOUNT_SID || TWILIO_ACCOUNT_SID === "ACd7d92cde826c1e7e9519a6c0811d4e53") {
   console.error("Missing or invalid TWILIO_ACCOUNT_SID");
 }
 
-if (!TWILIO_AUTH_TOKEN || TWILIO_AUTH_TOKEN === "your_auth_token") {
+if (!TWILIO_AUTH_TOKEN || TWILIO_AUTH_TOKEN === "c457d017fd5921d89593385ddd452ec9") {
   console.error("Missing or invalid TWILIO_AUTH_TOKEN");
 }
 
@@ -25,12 +26,18 @@ if (!EMERGENCY_CONTACT) {
 }
 
 // Initialize Twilio client
-let client;
+let client: Twilio | undefined;
 try {
   client = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
   console.log("Twilio client initialized successfully");
 } catch (err) {
   console.error("Failed to initialize Twilio client:", err);
+}
+
+interface TwilioError {
+  code?: number | string;
+  message?: string;
+  toString: () => string;
 }
 
 export async function POST(request: Request) {
@@ -93,19 +100,20 @@ export async function POST(request: Request) {
         callSid: call.sid,
         mockMode: isMockMode
       });
-    } catch (twilioError) {
+    } catch (twilioError: unknown) {
       console.error("Twilio API Error:", twilioError);
       console.error("Error details:", JSON.stringify(twilioError, null, 2));
       
       // Check for common Twilio errors
       let errorMessage = "Failed to send alert via Twilio";
-      let errorCode = twilioError.code || "UNKNOWN";
+      let errorCode = "UNKNOWN";
+      const twilioErr = twilioError as TwilioError;
       
-      if ((twilioError as any).code === 21608) {
+      if (twilioErr.code === 21608) {
         errorMessage = "The Twilio phone number is not a valid, SMS-capable phone number";
-      } else if ((twilioError as any).code === 21211) {
+      } else if (twilioErr.code === 21211) {
         errorMessage = "The 'To' phone number is invalid";
-      } else if ((twilioError as any).code === 20003) {
+      } else if (twilioErr.code === 20003) {
         errorMessage = "Authentication error - check Twilio credentials";
       }
       
@@ -114,20 +122,22 @@ export async function POST(request: Request) {
           status: "error", 
           message: errorMessage,
           errorCode: errorCode,
-          errorDetails: twilioError.toString()
+          errorDetails: twilioErr.toString()
         },
         { status: 500 }
       );
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("SOS API General Error:", error);
     console.error("Error type:", typeof error);
-    console.error("Error stack:", error?.stack || "No stack trace");
+    
+    const err = error as Error;
+    console.error("Error stack:", err?.stack || "No stack trace");
     
     return NextResponse.json(
       { 
         status: "error", 
-        message: error instanceof Error ? error.message : "Unknown error processing the request",
+        message: err instanceof Error ? err.message : "Unknown error processing the request",
         errorDetails: JSON.stringify(error)
       },
       { status: 500 }

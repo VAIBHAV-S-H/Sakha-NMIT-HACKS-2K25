@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useToast } from "@/components/ui/use-toast"
+import { auth } from "@/lib/auth"
 
 interface EmergencyContact {
   _id: string
@@ -34,16 +36,38 @@ export function EmergencyContacts() {
   const [error, setError] = useState<string | null>(null)
   const [newContact, setNewContact] = useState({ name: "", phone: "", relationship: "" })
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { toast } = useToast()
 
   // Fetch emergency contacts
   useEffect(() => {
     const fetchContacts = async () => {
       try {
+        // Check if user is authenticated
+        if (!auth.isAuthenticated()) {
+          setLoading(false)
+          setError("Please login to view your emergency contacts")
+          return
+        }
+        
         setLoading(true)
         const response = await fetch('/api/emergency-contacts')
+        
+        if (response.status === 401) {
+          // Authentication error
+          setError("Please login to view your emergency contacts")
+          // Suggest login to the user
+          toast({
+            title: "Authentication required",
+            description: "Please login to manage your emergency contacts",
+            variant: "destructive",
+          })
+          return
+        }
+        
         if (!response.ok) {
           throw new Error('Failed to fetch emergency contacts')
         }
+        
         const data = await response.json()
         setContacts(data)
       } catch (err) {
@@ -55,9 +79,20 @@ export function EmergencyContacts() {
     }
     
     fetchContacts()
-  }, [])
+  }, [toast])
 
   const handleAddContact = async () => {
+    // Check if user is authenticated
+    if (!auth.isAuthenticated()) {
+      setError("Please login to add emergency contacts")
+      toast({
+        title: "Authentication required",
+        description: "Please login to manage your emergency contacts",
+        variant: "destructive",
+      })
+      return
+    }
+    
     try {
       // Validate input
       if (!newContact.name || !newContact.phone) {
@@ -74,6 +109,16 @@ export function EmergencyContacts() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newContact)
       })
+
+      if (response.status === 401) {
+        setError("Please login to add emergency contacts")
+        toast({
+          title: "Authentication required",
+          description: "Please login to manage your emergency contacts",
+          variant: "destructive",
+        })
+        return
+      }
 
       if (!response.ok) {
         throw new Error('Failed to add emergency contact')
@@ -97,10 +142,31 @@ export function EmergencyContacts() {
   }
 
   const handleDeleteContact = async (id: string) => {
+    // Check if user is authenticated
+    if (!auth.isAuthenticated()) {
+      setError("Please login to delete emergency contacts")
+      toast({
+        title: "Authentication required",
+        description: "Please login to manage your emergency contacts",
+        variant: "destructive",
+      })
+      return
+    }
+    
     try {
       const response = await fetch(`/api/emergency-contacts?id=${id}`, {
         method: 'DELETE'
       })
+
+      if (response.status === 401) {
+        setError("Please login to delete emergency contacts")
+        toast({
+          title: "Authentication required",
+          description: "Please login to manage your emergency contacts",
+          variant: "destructive",
+        })
+        return
+      }
 
       if (!response.ok) {
         throw new Error('Failed to delete emergency contact')
@@ -143,8 +209,8 @@ export function EmergencyContacts() {
               <div className="space-y-4 py-3">
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>
-                  <Input 
-                    id="name" 
+                  <Input
+                    id="name"
                     placeholder="Enter contact name"
                     value={newContact.name}
                     onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
@@ -152,8 +218,8 @@ export function EmergencyContacts() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
-                  <Input 
-                    id="phone" 
+                  <Input
+                    id="phone"
                     placeholder="Enter phone number"
                     value={newContact.phone}
                     onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
@@ -161,8 +227,8 @@ export function EmergencyContacts() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="relationship">Relationship</Label>
-                  <Input 
-                    id="relationship" 
+                  <Input
+                    id="relationship"
                     placeholder="E.g., Parent, Friend, Sibling"
                     value={newContact.relationship}
                     onChange={(e) => setNewContact({ ...newContact, relationship: e.target.value })}
@@ -172,8 +238,8 @@ export function EmergencyContacts() {
               <DialogFooter>
                 <DialogClose asChild>
                   <Button variant="outline" type="button">
-                    Cancel
-                  </Button>
+                  Cancel
+                </Button>
                 </DialogClose>
                 <Button type="button" onClick={handleAddContact}>
                   Add Contact
@@ -194,6 +260,16 @@ export function EmergencyContacts() {
             <div className="text-center py-6">
               <AlertCircle className="h-10 w-10 text-saheli-danger mx-auto mb-2" />
               <p className="text-saheli-danger">{error}</p>
+              {error.includes("login") && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="mt-2"
+                  onClick={() => window.location.href = "/login"}
+                >
+                  Login
+                </Button>
+              )}
             </div>
           ) : contacts.length === 0 ? (
             <div className="text-center py-6">
@@ -208,9 +284,9 @@ export function EmergencyContacts() {
                   <div className="flex items-center gap-2">
                     <div className="h-8 w-8 rounded-full bg-saheli-light flex items-center justify-center">
                       <User className="h-4 w-4 text-saheli-primary" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">{contact.name}</p>
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm">{contact.name}</p>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Phone className="h-3 w-3" />
                         <span>{contact.phone}</span>
@@ -223,12 +299,12 @@ export function EmergencyContacts() {
                         {contact.relationship}
                       </Badge>
                     )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
+                  <Button
+                    variant="ghost"
+                    size="icon"
                       className="h-7 w-7 rounded-full hover:bg-saheli-danger/10 hover:text-saheli-danger"
                       onClick={() => handleDeleteContact(contact._id)}
-                    >
+                  >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="14"
@@ -250,7 +326,7 @@ export function EmergencyContacts() {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
           )}
         </ScrollArea>
       </CardContent>

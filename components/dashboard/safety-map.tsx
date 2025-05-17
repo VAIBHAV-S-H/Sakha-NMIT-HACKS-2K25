@@ -1298,7 +1298,7 @@ export function SafetyMap() {
         toast({
           title: "Using default location",
           description: "Showing Bangalore, India as default location.",
-        });
+      });
       }
     } finally {
       setLoading(false);

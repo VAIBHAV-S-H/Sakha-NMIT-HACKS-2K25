@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     const updatedLocation = await db.collection(COLLECTIONS.THREAT_LOCATIONS).findOne({
       _id: new ObjectId(id)
     })
-    
+
     return NextResponse.json(updatedLocation)
   } catch (error) {
     console.error("Error voting for threat location:", error)

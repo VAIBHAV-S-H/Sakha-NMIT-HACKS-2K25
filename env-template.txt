@@ -1,0 +1,17 @@
+# Environment variables for Sakha Safety App
+
+# Google Gemini AI API Key (required for the chatbot functionality)
+# Get your API key from https://ai.google.dev/ and add it below
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# Email configuration for OTP functionality
+# For Gmail, use your email and an App Password (if you have 2FA enabled)
+# Learn more: https://support.google.com/accounts/answer/185833
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASS=your_app_password
+
+# Twilio credentials for SOS functionality (optional)
+TWILIO_ACCOUNT_SID=ACd7d92cde826c1e7e9519a6c0811d4e53
+TWILIO_AUTH_TOKEN=c457d017fd5921d89593385ddd452ec9
+TWILIO_PHONE_NUMBER=+17155788944
+EMERGENCY_CONTACT=+918431297102 
