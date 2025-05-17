@@ -172,11 +172,27 @@ export function SafetyMap() {
           };
           if (userPos && isMounted) {
             setUserLocation(userPos);
+            console.log("Using user's current location:", userPos);
           }
         } catch (locationError) {
           console.warn("Could not get user location:", locationError instanceof Error ? locationError.message : locationError);
-          // Don't show toast during initial load to avoid overwhelming the user
-          // We'll just fall back to the default location
+          
+          // Show a non-intrusive notification that we're using default location
+          if (isMounted) {
+            setTimeout(() => {
+              toast({
+                title: "Using default location",
+                description: "Allow location access for a personalized experience",
+                action: (
+                  <Button variant="outline" size="sm" onClick={handleCurrentLocation}>
+                    <LocateFixed className="h-4 w-4 mr-2" />
+                    Get Location
+                  </Button>
+                ),
+                duration: 7000,
+              });
+            }, 1500);
+          }
         }
 
         // Check if component is still mounted
@@ -184,7 +200,7 @@ export function SafetyMap() {
 
         // Initialize the map with user's location or default
         // Use default coordinates if userPos is null
-        const defaultCoords = [77.5946, 12.9716]; // Bangalore
+        const defaultCoords = [77.580643, 12.972442]; // Bangalore
         const mapCenter = userPos ? [userPos.longitude, userPos.latitude] : defaultCoords;
 
         // Clear the map container first
@@ -1215,6 +1231,12 @@ export function SafetyMap() {
     setLoading(true);
 
     try {
+      // Show user prompt explaining why we need location
+      toast({
+        title: "Requesting location",
+        description: "Please allow location access to center the map on your position.",
+      });
+      
       // Request location with timeout
       const position = await getCurrentPosition();
       
@@ -1247,11 +1269,37 @@ export function SafetyMap() {
         ? error.message 
         : "Failed to get your location. Please check your location permissions.";
       
+      // Give more helpful instructions based on common browsers
+      const isChrome = navigator.userAgent.indexOf("Chrome") > -1;
+      const isFirefox = navigator.userAgent.indexOf("Firefox") > -1;
+      const isSafari = navigator.userAgent.indexOf("Safari") > -1 && navigator.userAgent.indexOf("Chrome") === -1;
+      
+      let helpText = "You may need to enable location services in your browser settings.";
+      
+      if (isChrome) {
+        helpText = "In Chrome, click the lock/info icon in the address bar and enable location permissions.";
+      } else if (isFirefox) {
+        helpText = "In Firefox, click the lock icon in the address bar and enable location permissions.";
+      } else if (isSafari) {
+        helpText = "In Safari, go to Settings > Websites > Location and allow for this site.";
+      }
+      
       toast({
-        title: "Location Error",
-        description: errorMessage,
+        title: "Location Access Needed",
+        description: `${errorMessage} ${helpText}`,
         variant: "destructive",
+        duration: 10000,
       });
+      
+      // Fall back to default location
+      if (tomtomMapRef.current) {
+        const defaultCoords = [77.580643, 12.972442]; // Bangalore
+        tomtomMapRef.current.setView([defaultCoords[1], defaultCoords[0]], 13);
+        toast({
+          title: "Using default location",
+          description: "Showing Bangalore, India as default location.",
+        });
+      }
     } finally {
       setLoading(false);
     }

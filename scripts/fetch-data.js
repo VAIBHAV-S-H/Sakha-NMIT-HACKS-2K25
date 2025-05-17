@@ -11,7 +11,8 @@ const COLLECTIONS = {
   EMERGENCY_CONTACTS: 'emergency_contacts',
   TRAVEL_REQUESTS: 'travel_requests',
   THREAT_LOCATIONS: 'threat_locations',
-  NOTIFICATIONS: 'notifications'
+  NOTIFICATIONS: 'notifications',
+  GEOFENCING: 'geofencing'
 };
 
 let client;
@@ -195,6 +196,19 @@ async function findUnreadNotificationsByUserId(userId) {
   }).toArray();
 }
 
+// Geofencing Collection Functions
+async function findAllGeofences() {
+  return await db.collection(COLLECTIONS.GEOFENCING).find({}).toArray();
+}
+
+async function findGeofenceById(geofenceId) {
+  return await db.collection(COLLECTIONS.GEOFENCING).findOne({ _id: new ObjectId(geofenceId) });
+}
+
+async function findGeofenceByName(name) {
+  return await db.collection(COLLECTIONS.GEOFENCING).findOne({ name });
+}
+
 // Example usage
 async function main() {
   try {
@@ -231,6 +245,15 @@ async function main() {
       case 'unread-notifications':
         result = await findUnreadNotificationsByUserId(param);
         break;
+      case 'geofences':
+        result = await findAllGeofences();
+        break;
+      case 'geofence':
+        result = await findGeofenceById(param);
+        break;
+      case 'geofence-name':
+        result = await findGeofenceByName(param);
+        break;
       default:
         console.log('Available commands:');
         console.log('  users - List all users');
@@ -241,6 +264,9 @@ async function main() {
         console.log('  threats - Find all active threat locations');
         console.log('  notifications <userId> - Find notifications for a user');
         console.log('  unread-notifications <userId> - Find unread notifications for a user');
+        console.log('  geofences - List all geofences');
+        console.log('  geofence <geofenceId> - Find a geofence by ID');
+        console.log('  geofence-name <name> - Find a geofence by name');
         result = { message: 'Please provide a valid command' };
     }
     
@@ -277,5 +303,8 @@ module.exports = {
   findActiveThreatLocations,
   findNearbyThreats,
   findNotificationsByUserId,
-  findUnreadNotificationsByUserId
+  findUnreadNotificationsByUserId,
+  findAllGeofences,
+  findGeofenceById,
+  findGeofenceByName
 }; 
