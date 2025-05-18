@@ -52,7 +52,7 @@ export function DashboardHeader() {
 
         <div className="flex items-center">
           <Link href="/dashboard" className="flex items-center">
-            <span className="text-2xl font-bold text-saheli-rose">SAHELI</span>
+            <span className="text-2xl font-bold text-saheli-rose">SAKHA</span>
           </Link>
         </div>
 
