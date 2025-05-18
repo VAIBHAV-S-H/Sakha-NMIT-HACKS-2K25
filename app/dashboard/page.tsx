@@ -115,7 +115,7 @@ export default function DashboardPage() {
                     <div>
                       <p className="font-medium">Keep your device charged</p>
                       <p className="text-sm text-muted-foreground">
-                        Ensure your SAHELI device has sufficient battery for emergencies
+                        Ensure your Smart device has sufficient battery for emergencies
                       </p>
                     </div>
                   </li>
@@ -126,7 +126,7 @@ export default function DashboardPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Community Updates</CardTitle>
-                <CardDescription>Latest news from the SAHELI community</CardDescription>
+                <CardDescription>Latest news from the SAKHA community</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -154,7 +154,7 @@ export default function DashboardPage() {
                       <Badge variant="outline">Update</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      SAHELI now available in 5 new cities across the country
+                      SAKHA now available in 5 new cities across the country
                     </p>
                   </div>
                 </div>
