@@ -19,7 +19,7 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-r from-saheli-orange to-saheli-pink opacity-70 blur-sm rounded-full"></div>
                 <Shield className="absolute inset-0 h-8 w-8 text-white" />
               </div>
-              <span className="text-2xl font-bold text-white gradient-text">SAHELI</span>
+              <span className="text-2xl font-bold text-white gradient-text">SAKHA</span>
             </div>
             <div className="flex items-center space-x-4">
               <Link href="/login">
@@ -50,7 +50,7 @@ export default function Home() {
               Empowering Women with Safety & Mobility
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              SAHELI combines AI-driven safety features with a trusted mobility network to ensure women can travel with
+              SAKHA combines AI-driven safety features with a trusted mobility network to ensure women can travel with
               confidence and peace of mind.
             </p>
           </div>
