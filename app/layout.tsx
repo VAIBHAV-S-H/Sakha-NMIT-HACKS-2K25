@@ -11,7 +11,7 @@ import ClientSOSButton from "@/components/safety/client-sos-button"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "SAHELI - Women's Safety & Mobility App",
+  title: "SAKHA - Women's Safety & Mobility App",
   description: "Empowering women with safety features and trusted mobility solutions",
   generator: 'v0.dev'
 }
