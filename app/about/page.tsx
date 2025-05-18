@@ -12,7 +12,7 @@ export default function AboutPage() {
             Back to Home
           </Link>
         </Button>
-        <h1 className="text-3xl font-bold gradient-text">About SAHELI</h1>
+        <h1 className="text-3xl font-bold gradient-text">About SAKHA</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
@@ -20,7 +20,7 @@ export default function AboutPage() {
           <section className="space-y-4">
             <h2 className="text-2xl font-semibold text-primary">Our Mission</h2>
             <p className="text-lg">
-              SAHELI is dedicated to empowering women with technology-driven safety solutions that provide confidence,
+              SAKHA is dedicated to empowering women with technology-driven safety solutions that provide confidence,
               independence, and peace of mind. We believe that every woman deserves to move freely without fear, and
               we're committed to making that a reality.
             </p>
@@ -38,7 +38,7 @@ export default function AboutPage() {
               preventive, and many rely on constant internet connectivity or manual activation during emergencies.
             </p>
             <p>
-              SAHELI addresses these gaps with proactive safety measures, offline capabilities, and a trusted community
+              SAKHA addresses these gaps with proactive safety measures, offline capabilities, and a trusted community
               network that works together to create safer environments for women.
             </p>
           </section>
@@ -155,11 +155,6 @@ export default function AboutPage() {
             {
               name: "S Hari Priya",
               role: "UI and web application",
-              bio: "CSE 3rd Year Student",
-            },
-            {
-              name: "Srujana R Bharadwaj",
-              role: "IOT and device integration for sos",
               bio: "CSE 3rd Year Student",
             },
             {
